@@ -1,0 +1,137 @@
+* {
+    -webkit-user-select: none;
+    /* Safari */
+    -ms-user-select: none;
+    /* IE 10 and IE 11 */
+    user-select: none;
+    /* Standard syntax */
+}
+
+
+.character {
+    width: 60px;
+    height: 60px;
+    position: fixed;
+    z-index: 10;
+    background-image: url("../img/right.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.bullets {
+    z-index: 11;
+}
+
+.left {
+    background-image: url("../img/left.png");
+}
+
+.right {
+    background-image: url("../img/right.png");
+}
+
+.down {
+    background-image: url("../img/down.png");
+}
+
+.up {
+    background-image: url("../img/up.png");
+}
+
+.progress {
+    position: fixed;
+}
+
+.coord {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    font-size: 20px;
+    color: #FFF;
+    font-weight: bold;
+}
+
+.coord span {
+    font-weight: normal;
+}
+
+.tooltip {
+    position: fixed;
+    z-index: 20;
+    visibility: hidden;
+}
+
+.upgrade {
+    cursor: pointer;
+}
+
+.upgrade-item {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.movement-speed {
+    background-image: url("../img/speedup-removebg-preview.png");
+}
+
+.attack-speed {
+    background-image: url("../img/attackspeed-removebg-preview.png");
+}
+
+.heal {
+    background-image: url("../img/heal-removebg-preview.png");
+}
+
+.double-bullett {
+    background-image: url("../img/doublebullet-removebg-preview.png");
+}
+
+.modal {
+    background-color: #00000053 !important;
+}
+
+.modal-box {
+    text-align: center;
+}
+
+.modal-box .modal-title {
+    text-align: center;
+    font-size: 60px;
+    font-weight: bold;
+}
+
+.loots {
+    z-index: 5;
+}
+
+.fixed-loot {
+    position: fixed;
+    border-radius: 0px;
+    padding: 0px;
+    width: 16px !important;
+    height: 16px !important;
+    border: 0px;
+}
+
+.fixed-bullet-horizontal {
+    position: fixed;
+    border-radius: 5px;
+    padding: 0px;
+    width: 15px;
+    height: 4px;
+    border: 0px;
+}
+
+.fixed-bullet-vertical {
+    position: fixed;
+    border-radius: 5px;
+    padding: 0px;
+    width: 4px;
+    height: 15px;
+    border: 0px;
+}

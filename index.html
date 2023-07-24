@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDK</title>
+
+
+    <link href="css/daisyui2.50.0.css" rel="stylesheet" type="text/css" />
+    <link href="css/tailwind2.2.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="css/styles.css" type="text/css">
+    <script src="js/jquery-1.7.1.min.js"></script>
+
+</head>
+
+<body>
+    <h1 class="coord">
+        X: <span id="x">0</span>
+        | Y: <span id="y">0</span>
+        | Level: <span id="level">0</span>
+        | XP: <span id="xp">0</span>
+        | MS: <span id="ms">0</span>
+        | ATK: <span id="atk">0</span>
+        <button class="btn btn-info" onclick="
+        setAttackSpeed(1);
+        movement_speed = 4;
+        ">MAX</button>
+    </h1>
+
+    <div class="loots">
+    </div>
+
+    <div class="hero min-h-screen">
+        <div class="tooltip tooltip-open tooltip-top tooltip-info" data-tip=""></div>
+        <div class="bullets"></div>
+        <div class="character"></div>
+        <progress class="progress progress-success" value="0" max="100"></progress>
+    </div>
+
+    <script>
+        var c_width = parseInt($(".character").css("width").replace("px", ""));
+        var c_heigth = parseInt($(".character").css("height").replace("px", ""));
+        var width = $(window).width();
+        var height = $(window).height();
+        var x = width / 2 - c_width / 2;
+        var y = height / 2 - c_heigth / 2;
+        var xp = 0;
+        var level = 1;
+
+        var movement_speed = 1;
+        var health = 100;
+        var attack_speed = 10;
+
+        var look = "RIGHT";
+
+        var w = false;
+        var a = false;
+        var s = false;
+        var d = false;
+
+        window.onload = () => {
+            $(".upgrade").each(function (index) {
+                $(this).css("height", $(this).css("width"));
+            });
+            setAttackSpeed(attack_speed);
+        }
+
+        //console.log(c_width);
+        //console.log(c_heigth);
+        //console.log(width);
+        //console.log(height);
+        //console.log(x);
+        //console.log(y);
+        $(".character").css("top", y);
+        $(".character").css("right", x);
+
+        $("#x").html(x);
+        $("#y").html(y);
+
+        $(".progress").css("width", c_width);
+
+        $(".progress").css("top", y + c_heigth);
+        $(".progress").css("right", x);
+
+
+        $(".tooltip").css("top", y);
+        $(".tooltip").css("right", x + (c_width / 2));
+
+
+        $("#xp").html(xp);
+        $("#level").html(level);
+
+        $(window).focusout(function () {
+            w = false;
+            a = false;
+            s = false;
+            d = false;
+        });
+
+        setInterval(() => {
+            var levelUp = $("#level_up");
+            if (levelUp.attr("checked") == "checked") {
+                return;
+            }
+            if (w) {
+                // W
+                if ((y + movement_speed) > (c_heigth / 2)) {
+                    y -= movement_speed;
+                } else {
+                    y = 0;
+                }
+                $(".character").removeClass("right");
+                $(".character").removeClass("left");
+                $(".character").removeClass("down");
+                $(".character").removeClass("up");
+                $(".character").addClass("up");
+            }
+            if (a) {
+                // A
+                if ((x + movement_speed) < (width - c_width)) {
+                    x += movement_speed;
+                } else {
+                    x = width - c_width;
+                }
+                $(".character").removeClass("right");
+                $(".character").removeClass("left");
+                $(".character").removeClass("down");
+                $(".character").removeClass("up");
+                $(".character").addClass("left");
+            }
+            if (s) {
+                // S
+                if ((y + movement_speed) < (height - c_heigth)) {
+                    y += movement_speed;
+                } else {
+                    y = height - c_heigth;
+                }
+                $(".character").removeClass("right");
+                $(".character").removeClass("left");
+                $(".character").removeClass("down");
+                $(".character").removeClass("up");
+                $(".character").addClass("down");
+            }
+            if (d) {
+                // D
+                if ((x + movement_speed) > (c_width / 2)) {
+                    x -= movement_speed;
+                } else {
+                    x = 0;
+                }
+                $(".character").removeClass("right");
+                $(".character").removeClass("left");
+                $(".character").removeClass("down");
+                $(".character").removeClass("up");
+                $(".character").addClass("right");
+            }
+
+
+            $(".character").css("top", y);
+            $(".character").css("right", x);
+
+            $(".tooltip").css("top", y);
+            $(".tooltip").css("right", x + (c_width / 2));
+
+            $(".progress").css("top", y + c_heigth);
+            $(".progress").css("right", x);
+            $("#x").html(Math.round(x));
+            $("#y").html(Math.round(y));
+            $("#ms").html(Math.round(movement_speed * 10) / 10);
+            $("#atk").html(Math.round(attack_speed * 10) / 10);
+
+        }, 0);
+
+        $(window).click(function (e) {
+            removeLoot();
+        });
+        $(window).keydown(function (e) {
+            if (e.which == '69') {
+                // E
+                removeLoot();
+                return;
+            }
+
+            if (e.which == '87' || e.which == '38') {
+                // W
+                w = true;
+                look = "UP";
+            }
+            if (e.which == '65' || e.which == '37') {
+                // A
+                a = true;
+                look = "LEFT";
+            }
+            if (e.which == '83' || e.which == '40') {
+                // S
+                s = true;
+                look = "DOWN";
+            }
+            if (e.which == '68' || e.which == '39') {
+                // D
+                d = true;
+                look = "RIGHT";
+            }
+        });
+
+        $(window).keyup(function (e) {
+            if (e.which == '87' || e.which == '38') {
+                // W
+                w = false;
+                look = "UP";
+            }
+            if (e.which == '65' || e.which == '37') {
+                // A
+                a = false;
+                look = "LEFT";
+            }
+            if (e.which == '83' || e.which == '40') {
+                // S
+                s = false;
+                look = "DOWN";
+            }
+            if (e.which == '68' || e.which == '39') {
+                // D
+                d = false;
+                look = "RIGHT";
+            }
+        });
+
+
+        setTimeout(() => {
+        }, 1000);
+
+        const loots = [];
+        const loots_id = [];
+        const loots_x = [];
+        const loots_y = [];
+
+        createLoot();
+        createLoot();
+        createLoot();
+        createLoot();
+        function createLoot() {
+            var loots_div = $(".loots");
+            var id = generateID();
+            var sx = getRandomInt(100, (width - 100));
+            var sy = getRandomInt(100, (height - 100));
+            var s = '<kbd class="kbd bg-error text-white fixed-loot ' + id + '" style="top:' + sy + 'px; right:' + sx + 'px;"><img src="img/chest.png"></kbd>';
+            loots_div.html(loots_div.html() + s);
+            loots_id.push(id);
+            loots.push(s);
+            loots_x.push(sx);
+            loots_y.push(sy);
+        }
+
+        function removeLoot() {
+            //console.log(loots_x);
+            //console.log(loots_y);
+            //console.log(x +" "+y);
+            for (var i = 0; i < loots.length; i++) {
+                var yy = ((loots_y[i] - (y + (c_heigth / 2))) * 1);
+                var xx = ((loots_x[i] - (x + (c_width / 2))) * 1);
+                if (yy < 0) {
+                    yy = yy * -1;
+                }
+                if (xx < 0) {
+                    xx = xx * -1;
+                }
+
+                //console.log(xx);
+                //console.log(yy);
+                if (xx < 40 && yy < 40) {
+                    //console.log("ez: " + i);
+                    $(".tooltip").attr("data-tip", "Pick up loot");
+                    $(".tooltip").css("visibility", "visible");
+                    setTimeout(function () {
+                        $(".tooltip").css("visibility", "hidden");
+                    }, 1000);
+                    removeItemOnce(loots, loots[i]);
+                    removeItemOnce(loots_id, loots_id[i]);
+                    removeItemOnce(loots_x, loots_x[i]);
+                    removeItemOnce(loots_y, loots_y[i]);
+                    addXp(100);
+                    setTimeout(function () {
+                        createLoot();
+                    }, 5000);
+                }
+                //console.log($("."+loots_id[i]).css("top") +" "+$("."+loots_id[i]).css("right")+" "+y+" "+x);
+            }
+            var loots_div = $(".loots");
+            loots_div.html("");
+            for (var i = 0; i < loots.length; i++) {
+                var s = loots[i];
+                loots_div.html(loots_div.html() + s);
+            }
+        }
+
+        function removeItemOnce(arr, val) {
+            var index = arr.indexOf(val);
+            if (index > -1) {
+                arr.splice(index, 1);
+            }
+            return arr;
+        }
+
+        function generateID() {
+            var id = Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+            //console.log(id)
+            if (loots_id.includes(id)) {
+                generateID();
+            } else {
+                return id;
+            }
+        }
+
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min) + min);
+        }
+
+
+        function setXp(val) {
+            $(".progress").attr("value", val);
+            $("#xp").html(xp);
+            $("#level").html(level);
+        }
+
+        function addXp(val) {
+            xp += val;
+            setXp(xp);
+            if (xp >= parseInt($(".progress").attr("max"))) {
+                var levelUp = $("#level_up");
+                levelUp.attr("checked", true);
+                xp = 0;
+                level++;
+            }
+        }
+
+        var attack = null;
+        function setAttackSpeed(val) {
+            if (attack != null) {
+                clearInterval(attack);
+            }
+            attack_speed = val;
+            attack = setInterval(() => {
+                spawnBullet();
+            }, (attack_speed * 100));
+        }
+
+        const bullet = [];
+        const bullet_id = [];
+        const bullet_x = [];
+        const bullet_y = [];
+        function spawnBullet() {
+            var l = look;
+            var bullet_div = $(".bullets");
+            var id = generateID();
+            var sx = 0;
+            var sy = 0;
+            var cl = "fixed-bullet-horizontal";
+            if (look == "LEFT") {
+                sx = x + c_width;
+                sy = y + (c_heigth / 2);
+                cl = "fixed-bullet-horizontal";
+            }
+            if (look == "RIGHT") {
+                sx = x;
+                sy = y + (c_heigth / 2);
+                cl = "fixed-bullet-horizontal";
+            }
+            if (look == "UP") {
+                sx = x + (c_width / 2);
+                sy = y;
+                cl = "fixed-bullet-vertical";
+            }
+            if (look == "DOWN") {
+                sx = x + (c_width / 2);
+                sy = y + c_heigth;
+                cl = "fixed-bullet-vertical";
+            }
+            var s = '<kbd class=" bg-error text-white ' + cl + ' ' + id + '" dirTO="' + l + '" style="top:' + sy + 'px; right:' + sx + 'px;"></kbd>';
+            bullet_div.html(bullet_div.html() + s);
+            bullet_id.push(id);
+            bullet.push(s);
+            bullet_x.push(sx);
+            bullet_y.push(sy);
+        }
+        function removeBullet() {
+            setTimeout(function () {
+                removeItemOnce(bullet, s);
+                removeItemOnce(bullet_id, id);
+                removeItemOnce(bullet_x, sx);
+                removeItemOnce(bullet_y, sy);
+                $("." + bullet_id).remove();
+
+                //console.log(bullet + " " + bullet_id)
+            }, 10000);
+        }
+
+        setInterval(() => {
+            for (var i = 0; i < bullet_id.length; i++) {
+                var element = $("." + bullet_id[i]);
+                var dir = element.attr("dirTO");
+                var outside = false;
+                if (dir != "") {
+                    //console.log(dir);
+                    if (dir == "LEFT") {
+                        //console.log(element.css("right") + 10)
+                        var cord = parseInt(element.css("right").replace("px", "")) + 10;
+                        element.css("right", cord);
+                        if (cord >= (width + 20)) {
+                            outside = true;
+                        }
+                    }
+                    if (dir == "RIGHT") {
+                        var cord = parseInt(element.css("right").replace("px", "")) - 10;
+                        element.css("right", cord);
+                        if (cord <= -20) {
+                            outside = true;
+                        }
+                    }
+                    if (dir == "UP") {
+                        var cord = parseInt(element.css("top").replace("px", "")) - 10;
+                        element.css("top", cord);
+                        if (cord <= -20) {
+                            outside = true;
+                        }
+                    }
+                    if (dir == "DOWN") {
+                        var cord = parseInt(element.css("top").replace("px", "")) + 10;
+                        element.css("top", cord);
+                        if (cord >= (height + 20)) {
+                            outside = true;
+                        }
+                    }
+                }
+                if (outside) {
+                    console.log(bullet[i])
+                    removeItemOnce(bullet, bullet[i]);
+                    removeItemOnce(bullet_id, bullet_id[i]);
+                    removeItemOnce(bullet_x, bullet_x[i]);
+                    removeItemOnce(bullet_y, bullet_y[i]);
+                    element.remove();
+                }
+            }
+        }, 25)
+    </script>
+    <input type="checkbox" id="level_up" class="modal-toggle" disabled />
+    <div class="modal">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg modal-title text-green-500">LEVEL UP</h3>
+            <p class="py-4 modal-lore">Choose your new ability!
+            </p>
+            <div class="modal-action">
+                <div class="flex flex-col w-full lg:flex-row">
+                    <label onclick="setXp(0)"
+                        class="grid flex-grow h-32 w-32 card bg-base-300 rounded-box place-items-center upgrade">
+                        <div class="upgrade-item movement-speed" onclick="
+                        if(movement_speed < 4) {
+                            movement_speed = movement_speed + 0.1
+                        }
+                        $('#level_up').attr('checked', false);
+                        ">
+                        </div>
+                    </label>
+                    <div class="divider lg:divider-horizontal">OR</div>
+                    <label onclick="setXp(0)"
+                        class="grid flex-grow h-32 w-32 card bg-base-300 rounded-box place-items-center upgrade">
+                        <div class="upgrade-item attack-speed" onclick="
+                        if(attack_speed > 1) {
+                            setAttackSpeed(attack_speed - 0.5);
+                        }
+                        $('#level_up').attr('checked', false);
+                        ">
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
